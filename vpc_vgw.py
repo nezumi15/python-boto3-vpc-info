@@ -17,6 +17,7 @@ def get_regions():
 def get_vgws(region_list):
     vgw_list = []
     for region in region_list:
+        print(region)
         client = boto3.client('ec2', region_name=region)
         vgw_response = client.describe_vpn_gateways()
         for vgw in vgw_response['VpnGateways']:

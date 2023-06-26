@@ -1,0 +1,15 @@
+import boto3
+from pprint import pprint as pp
+
+def lambda_handler(event, context):
+    vpc_id = 'your_vpc_id'
+    main_route_table = get_main_route_table(vpc_id)
+    pp(main_route_table)
+
+def get_main_route_table(vpc_id):
+    ec2 = boto3.client('ec2')
+    response = ec2.describe_route_tables(Filters=[{'Name': 'association.main', 'Values': ['true']}, {'Name': 'vpc-id', 'Values': [vpc_id]}])
+    main_route_table = response['RouteTables']
+    return main_route_table
+
+lambda_handler('event', 'context')

@@ -17,6 +17,7 @@ def get_regions():
 def get_nat_gateways(region_list):
     nat_gateway_list = []
     for region in region_list:
+        print(region)
         client = boto3.client('ec2', region_name=region)
         nat_gateway_response = client.describe_nat_gateways()
         for nat_gateway in nat_gateway_response['NatGateways']:

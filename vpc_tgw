@@ -1,0 +1,26 @@
+import boto3
+from pprint import pprint as pp
+
+def lambda_handler(event, context):
+    region_list = get_regions()
+    all_transit_gateways = get_transit_gateways(region_list)
+    pp(all_transit_gateways)
+
+def get_regions():
+    ec2 = boto3.client('ec2')
+    regions = ec2.describe_regions()['Regions']
+    region_list = []
+    for region in regions:
+        region_list.append(region['RegionName'])
+    return region_list
+
+def get_transit_gateways(region_list):
+    transit_gateway_list = []
+    for region in region_list:
+        client = boto3.client('ec2', region_name=region)
+        transit_gateway_response = client.describe_transit_gateways()
+        for transit_gateway in transit_gateway_response['TransitGateways']:
+            transit_gateway_list.append({region: transit_gateway})
+    return transit_gateway_list
+
+lambda_handler('event', 'context')

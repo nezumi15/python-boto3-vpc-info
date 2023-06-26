@@ -2,14 +2,26 @@ import boto3
 from pprint import pprint as pp
 
 def lambda_handler(event, context):
-    vpc_id = 'your_vpc_id'
-    main_route_table = get_main_route_table(vpc_id)
+    region_list = get_regions()
+    vpc_id = input("Enter VPC ID: ")
+    main_route_table = describe_main_route_table(region_list, vpc_id)
     pp(main_route_table)
 
-def get_main_route_table(vpc_id):
+def get_regions():
     ec2 = boto3.client('ec2')
-    response = ec2.describe_route_tables(Filters=[{'Name': 'association.main', 'Values': ['true']}, {'Name': 'vpc-id', 'Values': [vpc_id]}])
-    main_route_table = response['RouteTables']
-    return main_route_table
+    regions = ec2.describe_regions()['Regions']
+    region_list = []
+    for region in regions:
+        region_list.append(region['RegionName'])
+    return region_list
+
+def describe_main_route_table(region_list, vpc_id):
+    main_route_table_list = []
+    for region in region_list:
+        client = boto3.client('ec2', region_name=region)
+        response = client.describe_route_tables(Filters=[{'Name': 'association.main', 'Values': ['true']}, {'Name': 'vpc-id', 'Values': [vpc_id]}])
+        for main_route_table in response['RouteTables']:
+            main_route_table_list.append({region: main_route_table})
+    return main_route_table_list
 
 lambda_handler('event', 'context')

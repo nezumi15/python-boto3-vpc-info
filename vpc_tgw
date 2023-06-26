@@ -17,6 +17,7 @@ def get_regions():
 def get_transit_gateways(region_list):
     transit_gateway_list = []
     for region in region_list:
+        print(region)
         client = boto3.client('ec2', region_name=region)
         transit_gateway_response = client.describe_transit_gateways()
         for transit_gateway in transit_gateway_response['TransitGateways']:

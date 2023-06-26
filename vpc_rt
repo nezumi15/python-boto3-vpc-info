@@ -18,6 +18,7 @@ def get_regions():
 def describe_main_route_table(region_list, vpc_id):
     main_route_table_list = []
     for region in region_list:
+        print(region)
         client = boto3.client('ec2', region_name=region)
         response = client.describe_route_tables(Filters=[{'Name': 'association.main', 'Values': ['true']}, {'Name': 'vpc-id', 'Values': [vpc_id]}])
         for main_route_table in response['RouteTables']:

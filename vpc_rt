@@ -15,12 +15,12 @@ def get_regions():
         region_list.append(region['RegionName'])
     return region_list
 
-def describe_main_route_table(region_list, vpc_id):
+def describe_main_route_table(region_list):
     main_route_table_list = []
     for region in region_list:
         print(region)
         client = boto3.client('ec2', region_name=region)
-        response = client.describe_route_tables(Filters=[{'Name': 'association.main', 'Values': ['true']}, {'Name': 'vpc-id', 'Values': [vpc_id]}])
+        response = client.describe_route_tables(Filters=[{'Name': 'association.main', 'Values': ['true']}])
         for main_route_table in response['RouteTables']:
             main_route_table_list.append({region: main_route_table})
     return main_route_table_list
